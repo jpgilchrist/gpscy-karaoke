@@ -28,9 +28,6 @@
         playlist: null,
         error: null,
         columns: [{
-          value: 'albm',
-          display: 'Album'
-        }, {
           value: 'arts',
           display: 'Artist'
         }, {
