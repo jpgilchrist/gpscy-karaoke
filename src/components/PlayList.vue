@@ -2,7 +2,7 @@
   <div class="flex-table">
     <div class="flex-header">
       <div class="flex-row">
-        <div class="flex-cell" v-for="column in columns">
+        <div class="flex-cell" v-for="column in columns" @click="sortBy(column)">
           <span>{{column.display}}</span><icon class="sort-direction" name="caret-down"></icon>
         </div>
         <div class="flex-cell scrollbar-placeholder"></div>
@@ -59,6 +59,13 @@
     computed: {
       sortedPlaylist () {
         return _.orderBy(this.playlist, ['arts', 'name'], [this.sort.arts, this.sort.name])
+      }
+    },
+    methods: {
+      sortBy (column) {
+        this.sort = Object.assign({}, this.sort, {
+          [column.value]: this.sort[column.value] === 'asc' ? 'desc' : 'asc'
+        })
       }
     }
   }
