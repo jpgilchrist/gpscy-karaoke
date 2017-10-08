@@ -8,9 +8,9 @@
         </div>
         <div class="flex-cell scrollbar-placeholder"></div>
       </div>
-      <div class="flex-row">
+      <div class="flex-row filters">
         <div class="flex-cell" v-for="column in columns">
-          <input v-model="filter[column.value]"/>
+          <input v-model="filter[column.value]" placeholder="Filter Column Here"/>
         </div>
         <div class="flex-cell scrollbar-placeholder"></div>
       </div>
@@ -69,7 +69,6 @@
     },
     computed: {
       sortedPlaylist () {
-        console.log(`filters arts: ${this.filter.arts} name: ${this.filter.name}`)
         const filtered = _.filter(this.playlist, song => {
           if (this.filter.arts) {
             if (song.arts.indexOf(this.filter.arts) < 0) {
@@ -83,7 +82,17 @@
           }
           return true
         })
-        return _.orderBy(filtered, ['arts', 'name'], [this.sort.arts, this.sort.name])
+        const ordered = _.orderBy(filtered, ['arts', 'name'], [this.sort.arts, this.sort.name])
+        setTimeout(() => {
+          const flexTable = document.getElementsByClassName('flex-table')[0]
+          const flexBody = document.getElementsByClassName('flex-body')[0]
+          if (flexTable.scrollHeight > flexBody.scrollHeight) {
+            flexBody.style.borderRight = '15px solid gray'
+          } else {
+            flexBody.style.borderRight = ''
+          }
+        }, 0)
+        return ordered
       },
       sortIcons () {
         return {
@@ -116,6 +125,18 @@
     .flex-header {
       .flex-row {
         border-bottom: 2px solid @borderColor;
+
+        &.filters {
+          .flex-cell {
+            padding: 0;
+          }
+
+          input {
+            width: 100%;
+            padding: 5px;
+            border: none;
+          }
+        }
         .flex-cell {
           font-weight: bold;
           display: flex;
@@ -128,14 +149,15 @@
             width: 14px;
             flex: 0 0 auto;
             background-color: @borderColor;
+            cursor: default;
+
+            &:hover {
+              background-color: @borderColor;
+            }
           }
 
           &:hover {
             background-color: @headerHoverColor;
-          }
-
-          .sort-direction {
-
           }
         }
       }
