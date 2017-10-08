@@ -3,7 +3,14 @@
     <div class="flex-header">
       <div class="flex-row">
         <div class="flex-cell" v-for="column in columns" @click="sortBy(column)">
-          <span>{{column.display}}</span><icon class="sort-direction" name="caret-down"></icon>
+          <span>{{column.display}}</span>
+          <icon class="sort-direction" v-bind:name='sortIcons[column.value]'></icon>
+        </div>
+        <div class="flex-cell scrollbar-placeholder"></div>
+      </div>
+      <div class="flex-row">
+        <div class="flex-cell" v-for="column in columns">
+          <input v-model="filter[column.value]"/>
         </div>
         <div class="flex-cell scrollbar-placeholder"></div>
       </div>
@@ -44,6 +51,10 @@
         sort: {
           arts: 'asc',
           name: 'asc'
+        },
+        filter: {
+          arts: '',
+          name: ''
         }
       }
     },
@@ -58,7 +69,27 @@
     },
     computed: {
       sortedPlaylist () {
-        return _.orderBy(this.playlist, ['arts', 'name'], [this.sort.arts, this.sort.name])
+        console.log(`filters arts: ${this.filter.arts} name: ${this.filter.name}`)
+        const filtered = _.filter(this.playlist, song => {
+          if (this.filter.arts) {
+            if (song.arts.indexOf(this.filter.arts) < 0) {
+              return false
+            }
+          }
+          if (this.filter.name) {
+            if (song.name.indexOf(this.filter.name) < 0) {
+              return false
+            }
+          }
+          return true
+        })
+        return _.orderBy(filtered, ['arts', 'name'], [this.sort.arts, this.sort.name])
+      },
+      sortIcons () {
+        return {
+          arts: this.sort.arts === 'asc' ? 'caret-down' : 'caret-up',
+          name: this.sort.name === 'asc' ? 'caret-down' : 'caret-up'
+        }
       }
     },
     methods: {
