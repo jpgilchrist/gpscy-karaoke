@@ -3,7 +3,6 @@ const app = express()
 const plist = require('plist')
 const fs = require('fs')
 const path = require('path')
-const _ = require('lodash')
 
 const library = plist.parse(fs.readFileSync(path.join(__dirname, '../Library.xml'), 'utf8'))
 const playlist = library.Playlists[0]['Playlist Items'];
