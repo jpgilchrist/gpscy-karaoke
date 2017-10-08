@@ -9,9 +9,10 @@ const library = plist.parse(fs.readFileSync(path.join(__dirname, '../Library.xml
 const playlist = library.Playlists[0]['Playlist Items'];
 
 app.use(function (req, res, next) {
-  console.log('Request URL!: ', req.originalUrl)
   next()
 })
+
+app.use(express.static('dist'))
 
 app.get('/api/library', function (req, res) {
   res.json(library)
