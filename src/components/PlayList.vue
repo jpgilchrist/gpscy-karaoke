@@ -71,12 +71,12 @@
       sortedPlaylist () {
         const filtered = _.filter(this.playlist, song => {
           if (this.filter.arts) {
-            if (song.arts.indexOf(this.filter.arts) < 0) {
+            if (song.arts.toLowerCase().indexOf(this.filter.arts.toLowerCase()) < 0) {
               return false
             }
           }
           if (this.filter.name) {
-            if (song.name.indexOf(this.filter.name) < 0) {
+            if (song.name.toLowerCase().indexOf(this.filter.name.toLowerCase()) < 0) {
               return false
             }
           }
