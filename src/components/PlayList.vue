@@ -83,12 +83,8 @@
           return true
         })
 
-        var ordered = null
-        if (this.sort.arts) {
-          ordered = _.orderBy(filtered, filtered => filtered.arts.toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort.arts])
-        } else if (this.sort.name) {
-          ordered = _.orderBy(filtered, filtered => filtered.name.toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort.name])
-        }
+        const key = this.sort.arts ? 'arts' : 'name'
+        const ordered = _.orderBy(filtered, filtered => filtered[key].toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort[key]])
 
         setTimeout(() => {
           const flexTable = document.getElementsByClassName('flex-table')[0]
