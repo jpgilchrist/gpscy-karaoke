@@ -121,6 +121,8 @@
   ~"only screen and (min--moz-device-pixel-ratio: 1.5)",
   ~"only screen and (-o-min-device-pixel-ratio: 3/2)",
   ~"only screen and (min-device-pixel-ratio: 1.5)";
+  @chrome: ~"only screen and (-webkit-min-device-pixel-ratio:0)
+  and (min-resolution:.001dpcm)";
   @borderColor: gray;
   @headerHoverColor: #ddd;
   .flex-table {
@@ -156,7 +158,8 @@
 
           &.scrollbar-placeholder {
             @media @mobile,@highdensity { width: 0px; }
-            width: 16px;
+            @media @chrome { width: 16px; }
+            width: 14px;
             flex: 0 0 auto;
             background-color: @borderColor;
             cursor: default;
