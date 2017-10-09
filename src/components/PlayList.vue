@@ -136,7 +136,6 @@
           }
 
           input {
-            font-size: 1em;
             width: 100%;
             padding: 5px;
             border: none;
