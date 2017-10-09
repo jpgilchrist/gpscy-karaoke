@@ -116,6 +116,11 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+  @mobile: ~"only screen and (max-width: 529px)";
+  @highdensity: ~"only screen and (-webkit-min-device-pixel-ratio: 1.5)",
+  ~"only screen and (min--moz-device-pixel-ratio: 1.5)",
+  ~"only screen and (-o-min-device-pixel-ratio: 3/2)",
+  ~"only screen and (min-device-pixel-ratio: 1.5)";
   @borderColor: gray;
   @headerHoverColor: #ddd;
   .flex-table {
@@ -150,7 +155,8 @@
           cursor: pointer;
 
           &.scrollbar-placeholder {
-            width: 14px;
+            @media @mobile,@highdensity { width: 0px; }
+            width: 16px;
             flex: 0 0 auto;
             background-color: @borderColor;
             cursor: default;
