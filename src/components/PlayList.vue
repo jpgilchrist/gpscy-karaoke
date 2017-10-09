@@ -50,7 +50,7 @@
         }],
         sort: {
           arts: 'asc',
-          name: 'asc'
+          name: ''
         },
         filter: {
           arts: '',
@@ -82,7 +82,14 @@
           }
           return true
         })
-        const ordered = _.orderBy(filtered, ['arts', 'name'], [this.sort.arts, this.sort.name])
+
+        var ordered = null
+        if (this.sort.arts) {
+          ordered = _.orderBy(filtered, filtered => filtered.arts.toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort.arts])
+        } else if (this.sort.name) {
+          ordered = _.orderBy(filtered, filtered => filtered.name.toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort.name])
+        }
+
         setTimeout(() => {
           const flexTable = document.getElementsByClassName('flex-table')[0]
           const flexBody = document.getElementsByClassName('flex-body')[0]
@@ -96,16 +103,16 @@
       },
       sortIcons () {
         return {
-          arts: this.sort.arts === 'asc' ? 'caret-down' : 'caret-up',
-          name: this.sort.name === 'asc' ? 'caret-down' : 'caret-up'
+          arts: this.sort.arts === 'asc' ? 'caret-up' : this.sort.arts === 'desc' ? 'caret-down' : '',
+          name: this.sort.name === 'asc' ? 'caret-up' : this.sort.name === 'desc' ? 'caret-down' : ''
         }
       }
     },
     methods: {
       sortBy (column) {
-        this.sort = Object.assign({}, this.sort, {
+        this.sort = {
           [column.value]: this.sort[column.value] === 'asc' ? 'desc' : 'asc'
-        })
+        }
       }
     }
   }
@@ -127,6 +134,7 @@
         border-bottom: 2px solid @borderColor;
 
         &.filters {
+
           .flex-cell {
             padding: 0;
           }
