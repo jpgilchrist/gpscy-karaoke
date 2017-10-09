@@ -10,7 +10,7 @@
       </div>
       <div class="flex-row filters">
         <div class="flex-cell" v-for="column in columns">
-          <input v-model="filter[column.value]" placeholder="Filter Column Here"/>
+          <input v-model="filter[column.value]" placeholder="Search..."/>
         </div>
         <div class="flex-cell scrollbar-placeholder"></div>
       </div>
@@ -46,7 +46,7 @@
           display: 'Artist'
         }, {
           value: 'name',
-          display: 'Name'
+          display: 'Title'
         }],
         sort: {
           arts: 'asc',
@@ -140,6 +140,7 @@
           }
 
           input {
+            font-size: 1em;
             width: 100%;
             padding: 5px;
             border: none;
