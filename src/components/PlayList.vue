@@ -10,7 +10,7 @@
       </div>
       <div class="flex-row filters">
         <div class="flex-cell" v-for="column in columns">
-          <input v-model="filter[column.value]" placeholder="Filter Column Here"/>
+          <input v-model="filter[column.value]" placeholder="Search..."/>
         </div>
         <div class="flex-cell scrollbar-placeholder"></div>
       </div>
@@ -46,11 +46,11 @@
           display: 'Artist'
         }, {
           value: 'name',
-          display: 'Name'
+          display: 'Title'
         }],
         sort: {
           arts: 'asc',
-          name: 'asc'
+          name: ''
         },
         filter: {
           arts: '',
@@ -83,7 +83,10 @@
           }
           return true
         })
-        const ordered = _.orderBy(filtered, ['arts', 'name'], [this.sort.arts, this.sort.name])
+
+        const key = this.sort.arts ? 'arts' : 'name'
+        const ordered = _.orderBy(filtered, filtered => filtered[key].toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort[key]])
+
         setTimeout(() => {
           const flexTable = document.getElementsByClassName('flex-table')[0]
           const flexBody = document.getElementsByClassName('flex-body')[0]
@@ -97,16 +100,16 @@
       },
       sortIcons () {
         return {
-          arts: this.sort.arts === 'asc' ? 'caret-down' : 'caret-up',
-          name: this.sort.name === 'asc' ? 'caret-down' : 'caret-up'
+          arts: this.sort.arts === 'asc' ? 'caret-up' : this.sort.arts === 'desc' ? 'caret-down' : '',
+          name: this.sort.name === 'asc' ? 'caret-up' : this.sort.name === 'desc' ? 'caret-down' : ''
         }
       }
     },
     methods: {
       sortBy (column) {
-        this.sort = Object.assign({}, this.sort, {
+        this.sort = {
           [column.value]: this.sort[column.value] === 'asc' ? 'desc' : 'asc'
-        })
+        }
       }
     }
   }
@@ -114,6 +117,13 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+  @mobile: ~"only screen and (max-width: 529px)";
+  @highdensity: ~"only screen and (-webkit-min-device-pixel-ratio: 1.5)",
+  ~"only screen and (min--moz-device-pixel-ratio: 1.5)",
+  ~"only screen and (-o-min-device-pixel-ratio: 3/2)",
+  ~"only screen and (min-device-pixel-ratio: 1.5)";
+  @chrome: ~"only screen and (-webkit-min-device-pixel-ratio:0)
+  and (min-resolution:.001dpcm)";
   @borderColor: gray;
   @headerHoverColor: #ddd;
   .flex-table {
@@ -128,6 +138,7 @@
         border-bottom: 2px solid @borderColor;
 
         &.filters {
+
           .flex-cell {
             padding: 0;
           }
@@ -147,6 +158,8 @@
           cursor: pointer;
 
           &.scrollbar-placeholder {
+            @media @mobile,@highdensity { width: 0px; }
+            @media @chrome { width: 16px; }
             width: 14px;
             flex: 0 0 auto;
             background-color: @borderColor;
