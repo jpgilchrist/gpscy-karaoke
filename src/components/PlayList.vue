@@ -87,15 +87,19 @@
         const key = this.sort.arts ? 'arts' : 'name'
         const ordered = _.orderBy(filtered, filtered => filtered[key].toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort[key]])
 
-        setTimeout(() => {
-          const flexTable = document.getElementsByClassName('flex-table')[0]
-          const flexBody = document.getElementsByClassName('flex-body')[0]
-          if (flexTable.scrollHeight > flexBody.scrollHeight) {
-            flexBody.style.borderRight = '15px solid gray'
-          } else {
-            flexBody.style.borderRight = ''
-          }
-        }, 0)
+        if (navigator.userAgent.toLowerCase().indexOf('firefox') < 0) {
+          setTimeout(() => {
+            const flexTable = document.getElementsByClassName('flex-table')[0]
+            const flexBody = document.getElementsByClassName('flex-body')[0]
+            if (flexTable.scrollHeight > flexBody.scrollHeight) {
+              flexBody.style.borderRight = '15px solid gray'
+            } else {
+              flexBody.style.borderRight = ''
+            }
+            setScrollBarWidth()
+          }, 0)
+        }
+
         return ordered
       },
       sortIcons () {
@@ -111,6 +115,37 @@
           [column.value]: this.sort[column.value] === 'asc' ? 'desc' : 'asc'
         }
       }
+    }
+  }
+
+  function setScrollBarWidth () {
+    console.log('setting the scrollbar width')
+    var inner = document.createElement('p')
+    inner.style.width = '100%'
+    inner.style.height = '200px'
+
+    var outer = document.createElement('div')
+    outer.style.position = 'absolute'
+    outer.style.top = '0px'
+    outer.style.left = '0px'
+    outer.style.visibility = 'hidden'
+    outer.style.width = '200px'
+    outer.style.height = '150px'
+    outer.style.overflow = 'hidden'
+    outer.appendChild(inner)
+
+    document.body.appendChild(outer)
+    var w1 = inner.offsetWidth
+    outer.style.overflow = 'scroll'
+    var w2 = inner.offsetWidth
+    if (w1 === w2) w2 = outer.clientWidth
+
+    document.body.removeChild(outer)
+
+    var scrollbarWidth = w1 - w2 - 1
+    var placeholders = document.getElementsByClassName('scrollbar-placeholder')
+    for (var placeholder of placeholders) {
+      placeholder.style.width = scrollbarWidth + 'px'
     }
   }
 </script>
@@ -158,9 +193,9 @@
           cursor: pointer;
 
           &.scrollbar-placeholder {
-            @media @mobile,@highdensity { width: 0px; }
+            /* @media @mobile,@highdensity { width: 0px; }
             @media @chrome { width: 16px; }
-            width: 14px;
+            width: 14px; */
             flex: 0 0 auto;
             background-color: @borderColor;
             cursor: default;
