@@ -59,7 +59,8 @@
       }
     },
     created: function () {
-      axios.get('/api/playlist')
+      console.log('created')
+      axios.get('/karaoke/api/playlist')
         .then((response) => {
           this.playlist = response.data
         })
