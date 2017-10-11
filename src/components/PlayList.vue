@@ -211,7 +211,6 @@
     }
 
     .flex-body {
-      border-right: 0;
       flex: 1;
       overflow: auto;
     }
