@@ -87,19 +87,6 @@
         const key = this.sort.arts ? 'arts' : 'name'
         const ordered = _.orderBy(filtered, filtered => filtered[key].toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort[key]])
 
-        if (navigator.userAgent.toLowerCase().indexOf('firefox') < 0) {
-          setTimeout(() => {
-            const flexTable = document.getElementsByClassName('flex-table')[0]
-            const flexBody = document.getElementsByClassName('flex-body')[0]
-            if (flexTable.scrollHeight > flexBody.scrollHeight) {
-              flexBody.style.borderRight = '15px solid gray'
-            } else {
-              flexBody.style.borderRight = ''
-            }
-            setScrollBarWidth()
-          }, 0)
-        }
-
         return ordered
       },
       sortIcons () {
@@ -108,6 +95,23 @@
           name: this.sort.name === 'asc' ? 'caret-up' : this.sort.name === 'desc' ? 'caret-down' : ''
         }
       }
+    },
+    mounted: function () {
+      this.$nextTick(function () {
+        // Fix alignment and padding due to the scrollbar. Chrome seems to be the only
+        // browser (on Windows at least) that respects flex headers. The others scroll
+        // the whole page. Need to test on Safari though.
+        if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
+          var scrollBarWidth = getScrollBarWidth()
+          const flexTable = document.getElementsByClassName('flex-table')[0]
+          const flexBody = document.getElementsByClassName('flex-body')[0]
+          if (flexTable.scrollHeight > flexBody.scrollHeight) {
+            fixScrollBarWidth(scrollBarWidth)
+          } else {
+            flexBody.style.borderRight = ''
+          }
+        }
+      })
     },
     methods: {
       sortBy (column) {
@@ -118,7 +122,7 @@
     }
   }
 
-  function setScrollBarWidth () {
+  function getScrollBarWidth () {
     console.log('setting the scrollbar width')
     var inner = document.createElement('p')
     inner.style.width = '100%'
@@ -142,23 +146,19 @@
 
     document.body.removeChild(outer)
 
-    var scrollbarWidth = w1 - w2 - 1
+    return w1 - w2
+  }
+
+  function fixScrollBarWidth (pixels) {
     var placeholders = document.getElementsByClassName('scrollbar-placeholder')
     for (var placeholder of placeholders) {
-      placeholder.style.width = scrollbarWidth + 'px'
+      placeholder.style.width = `${pixels}px`
     }
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-  @mobile: ~"only screen and (max-width: 529px)";
-  @highdensity: ~"only screen and (-webkit-min-device-pixel-ratio: 1.5)",
-  ~"only screen and (min--moz-device-pixel-ratio: 1.5)",
-  ~"only screen and (-o-min-device-pixel-ratio: 3/2)",
-  ~"only screen and (min-device-pixel-ratio: 1.5)";
-  @chrome: ~"only screen and (-webkit-min-device-pixel-ratio:0)
-  and (min-resolution:.001dpcm)";
   @borderColor: gray;
   @headerHoverColor: #ddd;
   .flex-table {
@@ -193,9 +193,7 @@
           cursor: pointer;
 
           &.scrollbar-placeholder {
-            /* @media @mobile,@highdensity { width: 0px; }
-            @media @chrome { width: 16px; }
-            width: 14px; */
+            width: 0;
             flex: 0 0 auto;
             background-color: @borderColor;
             cursor: default;
@@ -213,6 +211,7 @@
     }
 
     .flex-body {
+      border-right: 0;
       flex: 1;
       overflow: auto;
     }
