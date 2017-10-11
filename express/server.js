@@ -9,7 +9,7 @@ let dupes = {}
 const playlist = library.Playlists[0]['Playlist Items'].map(function (song) {
   return {'name': song.name, 'arts': song.arts}
 }).filter(function (song) {
-  // create a key of just alphanumerics (e.g. Joel, Billy - Keeping The Faith => joelbillykeepingthefaith
+  // create a key of just alphanumerics (e.g. Joel, Billy - Keeping The Faith => joelbillykeepingthefaith)
   let key = song.arts.toLowerCase().replace(/[^\w]|_/g, '') + song.name.toLowerCase().replace(/[^\w]|_/g, '')
   if (dupes[key] === 1) {
     return false
