@@ -84,8 +84,9 @@
           return true
         })
 
-        const key = this.sort.arts ? 'arts' : 'name'
-        const ordered = _.orderBy(filtered, filtered => filtered[key].toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort[key]])
+        const keys = this.sort.arts ? ['arts', 'name'] : ['name', 'arts']
+        const ordered = _.orderBy(filtered, [ filtered => filtered[keys[0]].toLowerCase().replace(/[^\w\s]|_/g, ''),
+          filtered => filtered[keys[1]].toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort[keys[0]]], this.sort[keys[1]]])
 
         setTimeout(() => {
           const flexTable = document.getElementsByClassName('flex-table')[0]
