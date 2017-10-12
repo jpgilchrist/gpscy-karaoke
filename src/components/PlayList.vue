@@ -16,6 +16,9 @@
       </div>
     </div>
     <div class="flex-body">
+      <div class="loading" v-if="loading">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+      </div>
       <div class="flex-row" v-for="song in sortedPlaylist">
         <div class="flex-cell" v-for="column in columns">
           {{song[column.value]}}
@@ -39,6 +42,7 @@
     },
     data () {
       return {
+        loading: true,
         playlist: null,
         error: null,
         columns: [{
@@ -120,6 +124,9 @@
           [column.value]: this.sort[column.value] === 'asc' ? 'desc' : 'asc'
         }
       }
+    },
+    updated: function () {
+      this.loading = false
     }
   }
 
@@ -231,6 +238,11 @@
           padding: 0;
         }
       }
+    }
+
+    .loading {
+      text-align: center;
+      padding-top: 25px;
     }
   }
 </style>
