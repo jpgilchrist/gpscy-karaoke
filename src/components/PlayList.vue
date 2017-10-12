@@ -98,6 +98,25 @@
         const ordered = _.orderBy(filtered, [ filtered => filtered[keys[0]].toLowerCase().replace(/[^\w\s]|_/g, ''),
           filtered => filtered[keys[1]].toLowerCase().replace(/[^\w\s]|_/g, ''), [this.sort[keys[0]]], this.sort[keys[1]]])
 
+        this.$nextTick(function () {
+          // Fix alignment and padding due to the scrollbar. Chrome seems to be the only
+          // browser (on Windows at least) that respects flex headers. The others scroll
+          // the whole page. Need to test on Safari though.
+          if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
+            var scrollBarWidth = getScrollBarWidth()
+            const flexTable = document.getElementsByClassName('flex-table')[0]
+            const flexBody = document.getElementsByClassName('flex-body')[0]
+            if (flexTable.scrollHeight < flexBody.scrollHeight) {
+              // we have a scrollbar
+              fixScrollBarWidth(scrollBarWidth)
+              flexBody.style.borderRight = ''
+            } else {
+              // we don't have a scrollbar, fill in the space with a placeholder/border
+              flexBody.style.borderRight = `${scrollBarWidth}px solid gray`
+            }
+          }
+        })
+
         return ordered
       },
       sortIcons () {
@@ -106,23 +125,6 @@
           name: this.sort.name === 'asc' ? 'caret-up' : this.sort.name === 'desc' ? 'caret-down' : ''
         }
       }
-    },
-    mounted: function () {
-      this.$nextTick(function () {
-        // Fix alignment and padding due to the scrollbar. Chrome seems to be the only
-        // browser (on Windows at least) that respects flex headers. The others scroll
-        // the whole page. Need to test on Safari though.
-        if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
-          var scrollBarWidth = getScrollBarWidth()
-          const flexTable = document.getElementsByClassName('flex-table')[0]
-          const flexBody = document.getElementsByClassName('flex-body')[0]
-          if (flexTable.scrollHeight > flexBody.scrollHeight) {
-            fixScrollBarWidth(scrollBarWidth)
-          } else {
-            flexBody.style.borderRight = ''
-          }
-        }
-      })
     },
     methods: {
       sortBy (column) {
