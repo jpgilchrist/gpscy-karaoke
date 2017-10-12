@@ -15,10 +15,12 @@
         <div class="flex-cell scrollbar-placeholder"></div>
       </div>
     </div>
-    <div class="flex-body">
-      <div class="loading" v-if="loading">
-        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <div class="flex-body" v-if="loading">
+      <div class="loading">
+        <icon name="spinner" pulse></icon><span>Loading...</span>
       </div>
+    </div>
+    <div class="flex-body" v-if="!loading">
       <div class="flex-row" v-for="song in sortedPlaylist">
         <div class="flex-cell" v-for="column in columns">
           {{song[column.value]}}
@@ -33,6 +35,7 @@
   import _ from 'lodash'
   import 'vue-awesome/icons/caret-down'
   import 'vue-awesome/icons/caret-up'
+  import 'vue-awesome/icons/spinner'
   import Icon from 'vue-awesome/components/Icon.vue'
 
   export default {
@@ -63,17 +66,20 @@
       }
     },
     created: function () {
-      console.log('created')
+      this.loading = true
       axios.get('/karaoke/api/playlist')
         .then((response) => {
           this.playlist = response.data
+          this.loading = false
         })
         .catch((error) => {
           this.error = error
+          this.loading = false
         })
     },
     computed: {
       sortedPlaylist () {
+        this.loading = true
         const filtered = _.filter(this.playlist, song => {
           if (this.filter.arts) {
             if (song.arts.toLowerCase().indexOf(this.filter.arts.toLowerCase()) < 0) {
@@ -125,8 +131,10 @@
         }
       }
     },
-    updated: function () {
-      this.loading = false
+    watch: {
+      sortedPlaylist (newSortedPlaylist) {
+        this.loading = false
+      }
     }
   }
 
@@ -241,8 +249,14 @@
     }
 
     .loading {
-      text-align: center;
-      padding-top: 25px;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+
+      .fa-icon {
+        margin-right: 10px;
+      }
     }
   }
 </style>
