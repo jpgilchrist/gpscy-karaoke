@@ -231,6 +231,27 @@
     .flex-body {
       flex: 1;
       overflow: auto;
+
+      &::-webkit-scrollbar {
+        -webkit-appearance: none;
+      }
+
+      &::-webkit-scrollbar:vertical {
+        width: 16px;
+        background-color: darkgray;
+      }
+
+      &::-webkit-scrollbar:horizontal {
+        height: 11px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        height: 30px;
+        width: 14px;
+        border: 2px solid darkgray; /* should match background, can't be transparent */
+        background-color: black;
+      }
     }
 
     .flex-row {
