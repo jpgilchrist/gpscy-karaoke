@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="flex-body" v-if="!loading">
-      <div class="flex-row" v-for="song in sortedPlaylist">
+      <div class="flex-row" v-for="song in sortedPlaylist" v-bind:class="{ 'favorite': song.favorite }" @click="favorite(song)">
         <div class="flex-cell" v-for="column in columns">
           {{song[column.value]}}
         </div>
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import axios from 'axios'
   import _ from 'lodash'
   import 'vue-awesome/icons/caret-down'
@@ -80,6 +81,7 @@
     computed: {
       sortedPlaylist () {
         this.loading = true
+        const favorites = JSON.parse(window.localStorage.getItem('favorites')) || {}
         const filtered = _.filter(this.playlist, song => {
           if (this.filter.arts) {
             if (song.arts.toLowerCase().indexOf(this.filter.arts.toLowerCase()) < 0) {
@@ -91,6 +93,7 @@
               return false
             }
           }
+          Vue.set(song, 'favorite', favorites[song.id])
           return true
         })
 
@@ -131,6 +134,16 @@
         this.sort = {
           [column.value]: this.sort[column.value] === 'asc' ? 'desc' : 'asc'
         }
+      },
+      favorite (song) {
+        const favorites = JSON.parse(window.localStorage.getItem('favorites')) || {}
+        song.favorite = !song.favorite
+        if (song.favorite) {
+          favorites[song.id] = true
+        } else {
+          delete favorites[song.id]
+        }
+        window.localStorage.setItem('favorites', JSON.stringify(favorites))
       }
     },
     watch: {
@@ -179,6 +192,7 @@
 <style scoped lang="less">
   @borderColor: gray;
   @headerHoverColor: #ddd;
+  @favoriteColor: #ffff99;
   .flex-table {
     display: flex;
     flex: 1;
@@ -237,6 +251,13 @@
       display: flex;
       flex-direction: row;
       border-bottom: 1px solid @borderColor;
+      &:hover {
+        cursor: pointer;
+      }
+      &.favorite {
+        background-color: @favoriteColor;
+      }
+
       .flex-cell {
         flex: 1;
         border-left: 1px solid @borderColor;
