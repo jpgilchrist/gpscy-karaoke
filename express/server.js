@@ -7,7 +7,7 @@ const path = require('path')
 const library = plist.parse(fs.readFileSync(path.join(__dirname, '../Library.xml'), 'utf8'))
 let dupes = {}
 const playlist = library.Playlists[0]['Playlist Items'].map(function (song) {
-  return {'name': song.name, 'arts': song.arts}
+  return { 'name': song.name, 'arts': song.arts, 'id': song.soID }
 }).filter(function (song) {
   // create a key of just alphanumerics (e.g. Joel, Billy - Keeping The Faith => joelbillykeepingthefaith)
   let key = song.arts.toLowerCase().replace(/[^\w]|_/g, '') + song.name.toLowerCase().replace(/[^\w]|_/g, '')

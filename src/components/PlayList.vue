@@ -81,6 +81,7 @@
     computed: {
       sortedPlaylist () {
         this.loading = true
+        const favorites = JSON.parse(window.localStorage.getItem('favorites')) || {}
         const filtered = _.filter(this.playlist, song => {
           if (this.filter.arts) {
             if (song.arts.toLowerCase().indexOf(this.filter.arts.toLowerCase()) < 0) {
@@ -92,6 +93,7 @@
               return false
             }
           }
+          Vue.set(song, 'favorite', favorites[song.id])
           return true
         })
 
@@ -134,12 +136,14 @@
         }
       },
       favorite (song) {
-        if (!song.favorite) {
-          Vue.set(song, 'favorite', true)
+        const favorites = JSON.parse(window.localStorage.getItem('favorites')) || {}
+        song.favorite = !song.favorite
+        if (song.favorite) {
+          favorites[song.id] = true
         } else {
-          Vue.set(song, 'favorite', false)
+          delete favorites[song.id]
         }
-        console.log(`favorite: ${song.name}, value: ${song.favorite}`)
+        window.localStorage.setItem('favorites', JSON.stringify(favorites))
       }
     },
     watch: {
