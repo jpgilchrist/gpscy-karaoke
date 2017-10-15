@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="flex-body" v-if="!loading">
-      <div class="flex-row" v-for="song in sortedPlaylist">
+      <div v-for="song in sortedPlaylist" v-bind:class="{ 'favorite': song.favorite, 'flex-row': true }" @click="favorite(song)">
         <div class="flex-cell" v-for="column in columns">
           {{song[column.value]}}
         </div>
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import axios from 'axios'
   import _ from 'lodash'
   import 'vue-awesome/icons/caret-down'
@@ -131,6 +132,14 @@
         this.sort = {
           [column.value]: this.sort[column.value] === 'asc' ? 'desc' : 'asc'
         }
+      },
+      favorite (song) {
+        if (!song.favorite) {
+          Vue.set(song, 'favorite', true)
+        } else {
+          Vue.set(song, 'favorite', false)
+        }
+        console.log(`favorite: ${song.name}, value: ${song.favorite}`)
       }
     },
     watch: {
@@ -237,6 +246,14 @@
       display: flex;
       flex-direction: row;
       border-bottom: 1px solid @borderColor;
+      &:hover {
+        background-color: @headerHoverColor;
+        cursor: pointer;
+      }
+      &.favorite {
+        background-color: @headerHoverColor;
+      }
+
       .flex-cell {
         flex: 1;
         border-left: 1px solid @borderColor;
