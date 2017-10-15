@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="flex-body" v-if="!loading">
-      <div v-for="song in sortedPlaylist" v-bind:class="{ 'favorite': song.favorite, 'flex-row': true }" @click="favorite(song)">
+      <div class="flex-row" v-for="song in sortedPlaylist" v-bind:class="{ 'favorite': song.favorite }" @click="favorite(song)">
         <div class="flex-cell" v-for="column in columns">
           {{song[column.value]}}
         </div>
@@ -188,6 +188,7 @@
 <style scoped lang="less">
   @borderColor: gray;
   @headerHoverColor: #ddd;
+  @favoriteColor: #ffff99;
   .flex-table {
     display: flex;
     flex: 1;
@@ -247,11 +248,10 @@
       flex-direction: row;
       border-bottom: 1px solid @borderColor;
       &:hover {
-        background-color: @headerHoverColor;
         cursor: pointer;
       }
       &.favorite {
-        background-color: @headerHoverColor;
+        background-color: @favoriteColor;
       }
 
       .flex-cell {
